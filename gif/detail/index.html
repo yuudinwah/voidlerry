@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+
+<head></head>
+
+<body>
+    <!-- As if this Glitch were a typical HTML CodePen... -->
+    <script src="https://aframe.io/releases/0.7.1/aframe.min.js"></script>
+
+    <!-- Use components defined in separate files. -->
+    <script src="./../src/js/arrow-key-rotation.js"></script>
+    <script src="./../src/js/play-on-window-click.js"></script>
+    <script src="./../src/js/play-on-vrdisplayactivate-or-enter-vr.js"></script>
+    <script src="./../src/js/hide-once-playing.js"></script>
+
+    <div id="content">
+
+    </div>
+
+    <script type="module">
+        import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
+
+        const supabase = createClient(
+            'https://cwtzgrfzgkhfqflzjoht.supabase.co',
+            'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN3dHpncmZ6Z2toZnFmbHpqb2h0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE2NzI4MTcxODUsImV4cCI6MTk4ODM5MzE4NX0.c9oi7k6N68dcx-RbRM7MSqd9bFQUA0HBf3ArB8ICNe8',
+            { db: { schema: "public" }, }
+        )
+
+        window.onload = init()
+
+
+        async function init() {
+            const queryString = window.location.search;
+            const urlParams = new URLSearchParams(queryString);
+            var snapshot = await supabase.from('voidlerry').select(`*`).eq('id', urlParams.get('id')).limit(1)
+            var content = ''
+            if (snapshot.status >= 200) {
+                for (var index in snapshot.data) {
+                    content += `
+                    <a-scene>
+                        <a-sky src="${snapshot.data[index].url}"></a-sky></a-scene>
+                    `}
+            } else {
+                console.warn(snapshot.error)
+            }
+            document.getElementById('content').innerHTML = content
+        }
+    </script>
+    <script>
+
+        window.onload = init()
+
+        async function init() {
+
+        }
+    </script>
+</body>
+
+</html>
